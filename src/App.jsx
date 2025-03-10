@@ -5,11 +5,7 @@ import MovieDetails from "./components/MovieDetails";
 import WatchedSummary from "./components/WatchedSummary";
 import WatchedMovieList from "./components/WatchedMovieList";
 import Loader from "./components/Loader";
-
-export const average = (arr) =>
-  arr.reduce((acc, cur, i, arr) => acc + cur / arr.length, 0);
-
-export const KEY = "5040047b";
+import { KEY } from "./values.js";
 
 export default function App() {
   const [query, setQuery] = useState("");
