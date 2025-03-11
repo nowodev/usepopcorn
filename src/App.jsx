@@ -6,17 +6,13 @@ import WatchedSummary from "./components/WatchedSummary";
 import WatchedMovieList from "./components/WatchedMovieList";
 import Loader from "./components/Loader";
 import { useMovies } from "./useMovies";
+import { useLocalStorageState } from "./useLocalStorageState";
 
 export default function App() {
   const [query, setQuery] = useState("");
   const [selectedId, setSelectedId] = useState(null);
-  const {movies, isLoading, error} = useMovies(query, handleCloseMovie)
-
-  // const [watched, setWatched] = useState([]);
-  const [watched, setWatched] = useState(function () {
-    const storedValue = localStorage.getItem("watched");
-    return JSON.parse(storedValue);
-  });
+  const { movies, isLoading, error } = useMovies(query);
+  const [watched, setWatched] = useLocalStorageState([], "watched");
 
   function handleSelectMovie(id) {
     setSelectedId((selectedId) => (id === selectedId ? null : id));
@@ -34,11 +30,6 @@ export default function App() {
   function handleDeleteWatched(id) {
     setWatched((watched) => watched.filter((movie) => movie.imdbId !== id));
   }
-
-  useEffect(() => {
-    localStorage.setItem("watched", JSON.stringify(watched));
-  }, [watched]);
-
 
   return (
     <>
@@ -120,20 +111,23 @@ function Logo() {
 function Search({ query, setQuery }) {
   const inputEl = useRef(null);
 
-  useEffect(function () {
-    function callback(e) {
-      if (document.activeElement === inputEl.current) return;
+  useEffect(
+    function () {
+      function callback(e) {
+        if (document.activeElement === inputEl.current) return;
 
-      if (e.code === "Enter") {
-        inputEl.current.focus();
-        setQuery("");
+        if (e.code === "Enter") {
+          inputEl.current.focus();
+          setQuery("");
+        }
       }
-    }
 
-    document.addEventListener("keydown", callback);
+      document.addEventListener("keydown", callback);
 
-    return () => document.addEventListener("keydown", callback);
-  }, [setQuery]);
+      return () => document.addEventListener("keydown", callback);
+    },
+    [setQuery]
+  );
 
   // useEffect(() => {
   //   document.querySelector(".search").focus();
